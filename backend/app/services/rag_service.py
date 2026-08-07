@@ -3,8 +3,18 @@ import chromadb
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
 import os
+import datetime
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from sentence_transformers import CrossEncoder
 
 logger = logging.getLogger(__name__)
+
+# Initialize cross-encoder for reranking
+try:
+    cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2', max_length=512)
+except Exception as e:
+    logger.warning(f"Could not load cross_encoder: {e}")
+    cross_encoder = None
 
 # Initialize ChromaDB in persistent mode
 chroma_path = os.getenv("CHROMA_PATH", "/app/.cache/chroma")
@@ -20,31 +30,116 @@ def get_collection(collection_name: str = "news"):
         embedding_function=embedding_func
     )
 
-def chunk_and_store_text(doc_id: str, text: str, metadata: dict, collection_name: str = "news") -> int:
+def chunk_text(text: str) -> list[str]:
     """
-    Very simple chunking and storing for text data.
+    Helper function to chunk text respecting paragraphs and sentences.
+    """
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=50,
+        length_function=len,
+        separators=["\n\n", "\n", " ", ""]
+    )
+    return text_splitter.split_text(text)
+
+def ingest(document: dict, collection_name: str = "news") -> int:
+    """
+    Ingests a document into ChromaDB.
+    
+    document should have:
+    - id (str): Unique document identifier.
+    - text (str): The text content of the document.
+    - metadata (dict): Metadata including ticker, source, date, url.
     """
     collection = get_collection(collection_name)
     
-    # Simple chunking by paragraph or fixed length
-    # For demonstration, we just split by 1000 characters
-    chunks = [text[i:i+1000] for i in range(0, len(text), 1000)]
+    text = document.get("text", "")
+    doc_id = document.get("id", "doc_id")
+    metadata = document.get("metadata", {})
     
+    chunks = chunk_text(text)
+    
+    if not chunks:
+        return 0
+        
     ids = [f"{doc_id}_chunk_{i}" for i in range(len(chunks))]
     metadatas = [metadata for _ in chunks]
     
-    if chunks:
-        collection.add(
-            documents=chunks,
-            metadatas=metadatas,
-            ids=ids
-        )
+    collection.add(
+        documents=chunks,
+        metadatas=metadatas,
+        ids=ids
+    )
+    
     return len(chunks)
 
-def search_similar_text(query: str, n_results: int = 3, collection_name: str = "news"):
+def retrieve(query: str, ticker: str = None, k: int = 3, collection_name: str = "news"):
+    """
+    Retrieves the top k most relevant chunks for a given query, optionally filtered by ticker.
+    """
     collection = get_collection(collection_name)
+    
+    where_clause = None
+    if ticker:
+        where_clause = {"ticker": ticker}
+        
     results = collection.query(
         query_texts=[query],
-        n_results=n_results
+        n_results=k,
+        where=where_clause
     )
+    
     return results
+
+def retrieve_and_rerank(query: str, ticker: str = None, k: int = 3, collection_name: str = "news"):
+    """
+    Retrieves the top k*5 candidates and reranks them using a cross-encoder to return the best k.
+    """
+    # Fetch more candidates for reranking
+    initial_k = k * 5
+    results = retrieve(query, ticker=ticker, k=initial_k, collection_name=collection_name)
+    
+    if not results or not results["documents"] or not results["documents"][0] or cross_encoder is None:
+        return results
+        
+    docs = results["documents"][0]
+    ids = results["ids"][0]
+    metadatas = results["metadatas"][0]
+    
+    # Create pairs of (query, document) for the cross encoder
+    pairs = [[query, doc] for doc in docs]
+    
+    # Predict relevance scores
+    scores = cross_encoder.predict(pairs)
+    
+    # Pair up the scores with the results and sort descending by score
+    scored_docs = list(zip(scores, ids, docs, metadatas))
+    scored_docs.sort(key=lambda x: x[0], reverse=True)
+    
+    # Get top k
+    top_k = scored_docs[:k]
+    
+    reranked_results = {
+        "ids": [[item[1] for item in top_k]],
+        "documents": [[item[2] for item in top_k]],
+        "metadatas": [[item[3] for item in top_k]],
+        "distances": [[item[0] for item in top_k]] # Returning scores instead of distances
+    }
+    
+    return reranked_results
+
+def delete_stale_documents(days_old: int = 30, collection_name: str = "news"):
+    """
+    TTL Strategy: Deletes documents older than `days_old` days.
+    Relies on the date being stored in metadata as 'YYYY-MM-DD'.
+    """
+    collection = get_collection(collection_name)
+    cutoff_date = (datetime.datetime.now() - datetime.timedelta(days=days_old)).strftime("%Y-%m-%d")
+    
+    try:
+        collection.delete(
+            where={"date": {"$lt": cutoff_date}}
+        )
+        logger.info(f"Deleted documents older than {cutoff_date} from {collection_name}")
+    except Exception as e:
+        logger.error(f"Failed to delete stale documents: {e}")
