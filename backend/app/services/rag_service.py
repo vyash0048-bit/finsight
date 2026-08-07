@@ -17,7 +17,7 @@ except Exception as e:
     cross_encoder = None
 
 # Initialize ChromaDB in persistent mode
-chroma_path = os.getenv("CHROMA_PATH", "/app/.cache/chroma")
+chroma_path = os.getenv("CHROMA_PATH", ".cache/chroma")
 os.makedirs(chroma_path, exist_ok=True)
 client = chromadb.PersistentClient(path=chroma_path)
 
