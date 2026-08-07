@@ -13,6 +13,7 @@ def health_check():
 from app.api.endpoints import auth
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 
+from app.core import metrics
 from prometheus_client import make_asgi_app
 metrics_app = make_asgi_app()
 app.mount("/metrics", metrics_app)

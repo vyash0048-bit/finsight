@@ -1,0 +1,20 @@
+groups:
+  - name: FinsightAgentAlerts
+    rules:
+      - alert: HighAgentFailureRate
+        expr: sum(rate(agent_run_total{status="error"}[5m])) / sum(rate(agent_run_total[5m])) > 0.20
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High Agent Failure Rate (>20%)"
+          description: "More than 20% of Swarm agent executions have failed over the last 5 minutes. Check the LLM API quota and rate limits."
+
+      - alert: HighLLMCost
+        expr: rate(llm_cost_dollars_total[1h]) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High LLM Cost Trajectory"
+          description: "The current rate of LLM spend exceeds $5/hr. Investigate for excessive traffic or runaway loops."

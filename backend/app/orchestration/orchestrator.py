@@ -14,16 +14,29 @@ class Orchestrator:
         self.timeout = timeout
         
     async def run_agent_safe(self, agent, func, *args) -> dict:
+        import time
+        from app.core.metrics import agent_run_total, agent_run_duration_seconds
+        
+        start_time = time.time()
         try:
             # Run the synchronous agent execution in a thread to not block the asyncio event loop
             out = await asyncio.wait_for(
                 asyncio.to_thread(func, *args),
                 timeout=self.timeout
             )
+            duration = time.time() - start_time
+            agent_run_duration_seconds.labels(agent_name=agent.name).observe(duration)
+            agent_run_total.labels(agent_name=agent.name, status=out.status).inc()
             return {"status": out.status, "data": out.data, "summary": out.summary}
         except asyncio.TimeoutError:
+            duration = time.time() - start_time
+            agent_run_duration_seconds.labels(agent_name=agent.name).observe(duration)
+            agent_run_total.labels(agent_name=agent.name, status="error").inc()
             return {"status": "error", "summary": f"{agent.name} timed out."}
         except Exception as e:
+            duration = time.time() - start_time
+            agent_run_duration_seconds.labels(agent_name=agent.name).observe(duration)
+            agent_run_total.labels(agent_name=agent.name, status="error").inc()
             return {"status": "error", "summary": f"{agent.name} failed: {str(e)}"}
 
     async def run_research(self, ticker: str) -> dict:

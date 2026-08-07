@@ -47,10 +47,19 @@ class LLMClient:
                 
                 content = response.choices[0].message.content
                 
-                # Log usage and costs (critical for Phase 7)
+                # Log usage and costs (critical for Phase 7 and 17)
                 usage = response.usage
                 if usage:
                     logger.info(f"LLM Call - Tokens: {usage.total_tokens} (Prompt: {usage.prompt_tokens}, Completion: {usage.completion_tokens})")
+                    from app.core.metrics import llm_token_count_total, llm_cost_dollars_total
+                    llm_token_count_total.labels(model=self.model, token_type="prompt").inc(usage.prompt_tokens)
+                    llm_token_count_total.labels(model=self.model, token_type="completion").inc(usage.completion_tokens)
+                    try:
+                        cost = litellm.completion_cost(completion_response=response)
+                        if cost:
+                            llm_cost_dollars_total.labels(model=self.model).inc(cost)
+                    except Exception:
+                        pass
                 
                 # Parse and validate against the Pydantic schema
                 parsed_data = json.loads(content)
