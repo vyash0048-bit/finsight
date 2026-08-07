@@ -22,9 +22,8 @@ def mock_yfinance(mocker):
 
 @pytest.fixture
 def mock_yfinance_empty(mocker):
-    # Mock returning an empty dataframe
-    mock_df = pd.DataFrame()
-    return mocker.patch('app.services.market_data_service._fetch_from_yfinance', return_value=mock_df)
+    # Mock the fetch function to raise an Exception, simulating a failure or empty data
+    return mocker.patch('app.services.market_data_service._fetch_from_yfinance', side_effect=Exception("Simulated failure"))
 
 def test_get_price_history_success(mock_yfinance):
     # We turn off cache for tests to ensure it calls our mock

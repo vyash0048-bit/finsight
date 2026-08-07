@@ -11,7 +11,27 @@ services:
       - ../backend:/app
     environment:
       - ENV=development
+      - DATABASE_URL=postgresql://finsight_user:finsight_pass@postgres:5432/finsight_db
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: finsight_user
+      POSTGRES_PASSWORD: finsight_pass
+      POSTGRES_DB: finsight_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U finsight_user -d finsight_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build:
@@ -24,3 +44,7 @@ services:
     depends_on:
       - api
     restart: unless-stopped
+
+volumes:
+  postgres_data:
+
