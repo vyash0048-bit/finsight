@@ -9,3 +9,6 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+from app.api.endpoints import auth
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
