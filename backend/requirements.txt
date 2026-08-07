@@ -11,4 +11,6 @@ sqlalchemy==2.0.29
 alembic==1.13.1
 psycopg2-binary==2.9.9
 motor>=3.4.0
+ta
+chromadb==0.4.24
 
