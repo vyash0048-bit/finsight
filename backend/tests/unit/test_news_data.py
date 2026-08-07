@@ -1,5 +1,6 @@
 
 import pytest
+
 from app.services.news_service import get_recent_news
 
 

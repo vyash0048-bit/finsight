@@ -1,7 +1,8 @@
 
 import pandas as pd
-from app.agents.base import AgentState, BaseAgent
 from pydantic import BaseModel, Field
+
+from app.agents.base import AgentState, BaseAgent
 
 
 class TechnicalOutputSchema(BaseModel):
@@ -53,6 +54,7 @@ class TechnicalAgent(BaseAgent):
 # For LangGraph integration
 def technical_node(state: AgentState) -> dict:
     import pandas as pd
+
     from app.services.market_data_service import get_price_history
     from app.services.technical_service import get_technical_features
     

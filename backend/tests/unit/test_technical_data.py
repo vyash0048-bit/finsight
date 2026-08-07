@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+
 from app.services.technical_service import get_technical_features
 
 

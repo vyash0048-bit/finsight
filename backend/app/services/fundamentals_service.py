@@ -1,6 +1,7 @@
 import logging
 
 import yfinance as yf
+
 from app.schemas.fundamentals import FundamentalData
 
 logger = logging.getLogger(__name__)

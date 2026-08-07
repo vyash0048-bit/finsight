@@ -2,6 +2,7 @@ from datetime import UTC
 
 import pandas as pd
 import pytest
+
 from app.services.market_data_service import MarketDataError, get_price_history
 
 

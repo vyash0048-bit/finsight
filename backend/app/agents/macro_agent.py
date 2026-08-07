@@ -1,6 +1,7 @@
 
-from app.agents.base import BaseAgent
 from pydantic import BaseModel, Field
+
+from app.agents.base import BaseAgent
 
 
 class MacroOutputSchema(BaseModel):

@@ -1,13 +1,14 @@
 from unittest.mock import MagicMock
 
 import pytest
+from pydantic import BaseModel
+
 from app.agents.fundamental_agent import FundamentalAgent, FundamentalOutputSchema
 from app.agents.macro_agent import MacroAgent, MacroOutputSchema
 from app.agents.news_agent import NewsAgent, NewsOutputSchema
 from app.agents.risk_agent import RiskAgent, RiskOutputSchema
 from app.agents.technical_agent import TechnicalAgent, TechnicalOutputSchema
 from app.services.llm_client import LLMClient
-from pydantic import BaseModel
 
 
 class MockLLMResponse:

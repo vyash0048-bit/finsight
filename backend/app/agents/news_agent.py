@@ -1,6 +1,7 @@
 
-from app.agents.base import AgentState, BaseAgent
 from pydantic import BaseModel, Field
+
+from app.agents.base import AgentState, BaseAgent
 
 
 class NewsOutputSchema(BaseModel):

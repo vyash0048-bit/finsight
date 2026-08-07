@@ -5,8 +5,9 @@ from pathlib import Path
 
 import pandas as pd
 import yfinance as yf
-from app.schemas.market_data import PriceBar, PriceHistory
 from tenacity import retry, stop_after_attempt, wait_exponential
+
+from app.schemas.market_data import PriceBar, PriceHistory
 
 logger = logging.getLogger(__name__)
 

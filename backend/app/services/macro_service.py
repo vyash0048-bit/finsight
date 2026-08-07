@@ -1,6 +1,7 @@
 import logging
 
 import yfinance as yf
+
 from app.schemas.macro import MacroContext
 
 logger = logging.getLogger(__name__)

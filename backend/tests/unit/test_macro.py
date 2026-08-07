@@ -1,4 +1,5 @@
 import pandas as pd
+
 from app.schemas.macro import MacroContext
 from app.services.macro_service import get_macro_context
 

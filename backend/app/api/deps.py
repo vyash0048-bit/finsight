@@ -1,6 +1,7 @@
-from app.core.config import settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from app.core.config import settings
 
 engine = create_engine(settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -12,12 +13,13 @@ def get_db():
     finally:
         db.close()
 
-from app.models.user import User
-from app.schemas.user import TokenPayload
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy import select
+
+from app.models.user import User
+from app.schemas.user import TokenPayload
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl="/auth/login"

@@ -14,6 +14,7 @@ from app.api.endpoints import auth
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 
+import app.core.metrics as _metrics  # noqa: F401 — registers Prometheus collectors
 from prometheus_client import make_asgi_app
 
 metrics_app = make_asgi_app()

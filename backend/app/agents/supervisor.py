@@ -1,8 +1,9 @@
+from langgraph.graph import END, StateGraph
+
 from app.agents.base import AgentState
 from app.agents.fundamental_agent import fundamental_node
 from app.agents.news_agent import news_node
 from app.agents.technical_agent import technical_node
-from langgraph.graph import END, StateGraph
 
 
 def supervisor_node(state: AgentState) -> dict:

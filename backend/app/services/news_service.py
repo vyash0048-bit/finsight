@@ -2,9 +2,10 @@ import logging
 from datetime import UTC, datetime
 
 import yfinance as yf
+from motor.motor_asyncio import AsyncIOMotorClient
+
 from app.core.config import settings
 from app.schemas.news import NewsArticle
-from motor.motor_asyncio import AsyncIOMotorClient
 
 logger = logging.getLogger(__name__)
 

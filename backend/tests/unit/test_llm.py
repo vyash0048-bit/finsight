@@ -1,5 +1,6 @@
-from app.services.llm_client import LLMClient
 from pydantic import BaseModel
+
+from app.services.llm_client import LLMClient
 
 
 class DummySchema(BaseModel):

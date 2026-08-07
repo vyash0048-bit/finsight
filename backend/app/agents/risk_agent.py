@@ -1,6 +1,7 @@
 
-from app.agents.base import BaseAgent
 from pydantic import BaseModel, Field
+
+from app.agents.base import BaseAgent
 
 
 class RiskOutputSchema(BaseModel):
@@ -28,6 +29,7 @@ class RiskAgent(BaseAgent):
     def execute(self, ticker: str, findings: dict):
         try:
             import pandas as pd
+
             from app.services.market_data_service import get_price_history
             from app.services.risk_service import compute_risk_metrics
             
