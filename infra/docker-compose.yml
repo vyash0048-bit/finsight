@@ -12,9 +12,12 @@ services:
     environment:
       - ENV=development
       - DATABASE_URL=postgresql://finsight_user:finsight_pass@postgres:5432/finsight_db
+      - MONGO_URL=mongodb://mongo:27017
     depends_on:
       postgres:
         condition: service_healthy
+      mongo:
+        condition: service_started
     restart: unless-stopped
 
   postgres:
@@ -33,6 +36,13 @@ services:
       timeout: 5s
       retries: 5
 
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
   frontend:
     build:
       context: ../frontend
@@ -47,4 +57,5 @@ services:
 
 volumes:
   postgres_data:
+  mongo_data:
 

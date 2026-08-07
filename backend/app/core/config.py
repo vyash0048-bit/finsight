@@ -15,5 +15,8 @@ class Settings(BaseSettings):
         "DATABASE_URL", 
         f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
     )
+    
+    MONGO_URL: str = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+    MONGO_DB: str = os.getenv("MONGO_DB", "finsight_mongo")
 
 settings = Settings()
