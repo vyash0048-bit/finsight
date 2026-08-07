@@ -3,7 +3,7 @@ import logging
 import os
 from typing import Type, TypeVar, Optional, Any
 from pydantic import BaseModel, ValidationError
-from openai import OpenAI
+import litellm
 
 logger = logging.getLogger(__name__)
 
@@ -11,18 +11,16 @@ T = TypeVar('T', bound=BaseModel)
 
 class LLMClient:
     def __init__(self):
-        # Defaulting to OpenAI for this implementation
-        self.api_key = os.getenv("OPENAI_API_KEY", "dummy_key_for_testing")
-        self.client = OpenAI(api_key=self.api_key)
-        self.model = "gpt-4o-mini"
+        self.model = "gemini/gemini-3.1-flash-lite"
         
-    def call_llm(self, prompt: str, schema: Type[T], max_retries: int = 1) -> Optional[T]:
+    def call_llm(self, prompt: str, schema: Type[T], max_retries: int = 1, system_prompt: Optional[str] = None) -> Optional[T]:
         """
         Calls the LLM and enforces output to match the provided Pydantic schema using JSON mode.
         Includes a retry-with-repair mechanism for malformed JSON or validation errors.
         """
+        base_role = system_prompt if system_prompt else "You are a helpful financial AI."
         system_msg = (
-            f"You are a helpful financial AI. "
+            f"{base_role}\n"
             f"Respond ONLY with a valid JSON object matching this schema: {schema.model_json_schema()}"
         )
         
@@ -40,7 +38,8 @@ class LLMClient:
                 if attempt > 0:
                     messages.append({"role": "user", "content": f"Your previous response failed validation: {last_error}. Please fix the JSON output."})
 
-                response = self.client.chat.completions.create(
+                # litellm drop-in replacement
+                response = litellm.completion(
                     model=self.model,
                     messages=messages,
                     response_format={"type": "json_object"}

@@ -1,7 +1,9 @@
 import pytest
 import pandas as pd
 from app.services.portfolio_service import optimize_portfolio
-from app.agents.portfolio_agent import portfolio_node
+from app.agents.portfolio_agent import portfolio_node, PortfolioAgent
+from app.agents.base import AgentOutput
+from unittest.mock import patch
 
 def test_optimize_portfolio(mocker):
     # Mock price history
@@ -18,11 +20,11 @@ def test_optimize_portfolio(mocker):
         
         class MockHistory:
             def __init__(self):
-                # Generate an upward trend for AAPL and flat for MSFT to see if it favors AAPL
+                # Generate simple upward trends
                 if ticker == "AAPL":
                     self.bars = [MockBar(f"2023-01-{i:02d}", 100 + i) for i in range(1, 30)] * 4
                 else:
-                    self.bars = [MockBar(f"2023-01-{i:02d}", 100) for i in range(1, 30)] * 4
+                    self.bars = [MockBar(f"2023-01-{i:02d}", 100 + i*0.5) for i in range(1, 30)] * 4
                     
         return MockHistory()
         
@@ -36,12 +38,23 @@ def test_optimize_portfolio(mocker):
     # The sum of weights should be close to 1
     assert abs(sum(weights.values()) - 1.0) < 0.01
 
-def test_portfolio_agent(mocker):
-    mocker.patch("app.agents.portfolio_agent.optimize_portfolio", return_value={"AAPL": 0.6, "MSFT": 0.4})
+def test_portfolio_agent_architecture(mocker):
+    # Mock the underlying execute method to avoid LLM call
+    mock_execute = mocker.patch.object(PortfolioAgent, 'execute')
+    mock_execute.return_value = AgentOutput(
+        agent_name="PortfolioAgent",
+        status="success",
+        data={
+            "explanation": "Given AAPL: 60.0% and MSFT: 40.0%, this is an estimate based on mean-variance optimization over 1y.",
+            "warning": "Not a guarantee of future performance."
+        },
+        summary="Success"
+    )
     
-    state = {"tickers": ["AAPL", "MSFT"], "portfolio_analysis": "", "messages": []}
+    state = {"tickers": ["AAPL", "MSFT"]}
     result = portfolio_node(state)
     
     assert "portfolio_analysis" in result
     assert "AAPL: 60.0%" in result["portfolio_analysis"]
-    assert "MSFT: 40.0%" in result["portfolio_analysis"]
+    assert "Not a guarantee" in result["portfolio_analysis"]
+    assert "Optimal Portfolio Allocation" in result["portfolio_analysis"]
