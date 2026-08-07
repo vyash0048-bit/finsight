@@ -14,8 +14,8 @@ def test_call_llm_success(mocker):
     mock_response.usage.prompt_tokens = 50
     mock_response.usage.completion_tokens = 50
     
-    # Patch the chat completions create method
-    mock_create = mocker.patch("openai.resources.chat.completions.Completions.create", return_value=mock_response)
+    # Patch the litellm completion method
+    mock_create = mocker.patch("litellm.completion", return_value=mock_response)
     
     client = LLMClient()
     result = client.call_llm("What is the sentiment of AAPL?", DummySchema)

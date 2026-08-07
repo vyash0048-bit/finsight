@@ -1,0 +1,30 @@
+[
+  {
+    "id": "eval-1",
+    "agent": "TechnicalAgent",
+    "input_context": {
+      "ticker": "AAPL",
+      "price": 150.0,
+      "sma_50": 145.0,
+      "sma_200": 130.0,
+      "rsi": 65
+    },
+    "expected_output_metrics": {
+      "bullish_signal": true,
+      "key_insight_contains": ["golden cross", "above 200 SMA"]
+    }
+  },
+  {
+    "id": "eval-2",
+    "agent": "RiskAgent",
+    "input_context": {
+      "ticker": "TSLA",
+      "volatility": 0.45,
+      "var_95": -0.08
+    },
+    "expected_output_metrics": {
+      "risk_level": "high",
+      "key_insight_contains": ["highly volatile", "Value at Risk"]
+    }
+  }
+]
