@@ -230,7 +230,7 @@ sparsediffpy==0.3.0
 sqlalchemy==2.0.29
 sqlparse==0.5.5
 stamina==26.1.0
-starlette==1.4.1
+
 streamlit==1.61.1
 structlog==26.1.0
 sympy==1.14.0
