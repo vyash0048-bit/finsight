@@ -18,7 +18,12 @@ except Exception as e:
 
 # Initialize ChromaDB in persistent mode
 chroma_path = os.getenv("CHROMA_PATH", ".cache/chroma")
-os.makedirs(chroma_path, exist_ok=True)
+try:
+    os.makedirs(chroma_path, exist_ok=True)
+except PermissionError:
+    logger.warning(f"Permission denied when creating {chroma_path}. Falling back to '.cache/chroma'.")
+    chroma_path = ".cache/chroma"
+    os.makedirs(chroma_path, exist_ok=True)
 client = chromadb.PersistentClient(path=chroma_path)
 
 # Default embedding function uses all-MiniLM-L6-v2 via onnx
