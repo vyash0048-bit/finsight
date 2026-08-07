@@ -25,7 +25,7 @@ def optimize_portfolio(tickers: List[str]) -> Dict[str, float]:
         
     # Construct a DataFrame of closing prices
     df = pd.DataFrame(prices_dict)
-    df.index = pd.to_datetime(df.index)
+    df.index = pd.to_datetime(df.index, utc=True).tz_localize(None)
     df = df.sort_index().dropna()
     
     if len(df) < 50:
