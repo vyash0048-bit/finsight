@@ -13,4 +13,8 @@ psycopg2-binary==2.9.9
 motor>=3.4.0
 ta
 chromadb==0.4.24
+langchain
+langchain-openai
+langgraph
+PyPortfolioOpt
 
