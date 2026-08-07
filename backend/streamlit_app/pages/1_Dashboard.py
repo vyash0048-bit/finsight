@@ -1,7 +1,8 @@
-import streamlit as st
 import asyncio
 import os
 import sys
+
+import streamlit as st
 
 # Ensure backend modules are reachable
 backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -9,6 +10,7 @@ if backend_path not in sys.path:
     sys.path.append(backend_path)
 
 from styles import PREMIUM_CSS
+
 st.set_page_config(page_title="Dashboard | FinSight", layout="wide")
 st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
 
@@ -39,7 +41,7 @@ if st.button("🚀 Generate AI Report"):
                 st.session_state["report_cache"][ticker] = result
                 st.success(f"Analysis Complete for {ticker}!")
             except Exception as e:
-                st.error(f"Critical failure during orchestration: {str(e)}")
+                st.error(f"Critical failure during orchestration: {e!s}")
 
 # Render Report if it exists in cache
 if ticker and ticker in st.session_state["report_cache"]:

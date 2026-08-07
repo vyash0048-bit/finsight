@@ -1,5 +1,6 @@
-import streamlit as st
 import os
+
+import streamlit as st
 
 # Load env variables globally before importing backend modules
 env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))

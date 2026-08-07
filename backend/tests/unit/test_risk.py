@@ -1,7 +1,7 @@
-import pytest
 import numpy as np
 import pandas as pd
 from app.services.risk_service import compute_risk_metrics
+
 
 def test_compute_risk_metrics_math():
     # Construct a synthetic returns series with known properties

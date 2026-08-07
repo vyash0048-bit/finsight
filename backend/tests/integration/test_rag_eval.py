@@ -1,5 +1,5 @@
-import pytest
-from app.services.rag_service import ingest, retrieve, retrieve_and_rerank, client
+from app.services.rag_service import client, ingest, retrieve, retrieve_and_rerank
+
 
 def test_rag_evaluation():
     # Arrange: Create multiple mock documents

@@ -1,9 +1,9 @@
 import json
 import logging
-import os
-from typing import Type, TypeVar, Optional, Any
-from pydantic import BaseModel, ValidationError
+from typing import TypeVar
+
 import litellm
+from pydantic import BaseModel, ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ class LLMClient:
     def __init__(self):
         self.model = "gemini/gemini-3.1-flash-lite"
         
-    def call_llm(self, prompt: str, schema: Type[T], max_retries: int = 1, system_prompt: Optional[str] = None) -> Optional[T]:
+    def call_llm(self, prompt: str, schema: type[T], max_retries: int = 1, system_prompt: str | None = None) -> T | None:
         """
         Calls the LLM and enforces output to match the provided Pydantic schema using JSON mode.
         Includes a retry-with-repair mechanism for malformed JSON or validation errors.
@@ -51,7 +51,10 @@ class LLMClient:
                 usage = response.usage
                 if usage:
                     logger.info(f"LLM Call - Tokens: {usage.total_tokens} (Prompt: {usage.prompt_tokens}, Completion: {usage.completion_tokens})")
-                    from app.core.metrics import llm_token_count_total, llm_cost_dollars_total
+                    from app.core.metrics import (
+                        llm_cost_dollars_total,
+                        llm_token_count_total,
+                    )
                     llm_token_count_total.labels(model=self.model, token_type="prompt").inc(usage.prompt_tokens)
                     llm_token_count_total.labels(model=self.model, token_type="completion").inc(usage.completion_tokens)
                     try:

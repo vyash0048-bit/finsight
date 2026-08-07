@@ -1,10 +1,11 @@
+
 import pandas as pd
-from typing import List, Dict
+from app.services.market_data_service import get_price_history
 from pypfopt import expected_returns, risk_models
 from pypfopt.efficient_frontier import EfficientFrontier
-from app.services.market_data_service import get_price_history
 
-def optimize_portfolio(tickers: List[str]) -> Dict[str, float]:
+
+def optimize_portfolio(tickers: list[str]) -> dict[str, float]:
     """
     Optimizes a portfolio using mean-variance optimization (Max Sharpe Ratio).
     Returns the optimal weights for the given tickers.
@@ -43,6 +44,6 @@ def optimize_portfolio(tickers: List[str]) -> Dict[str, float]:
         cleaned_weights = ef.clean_weights()
         
         return dict(cleaned_weights)
-    except Exception as e:
+    except Exception:
         # Fallback to equal weighting if optimization fails
         return {ticker: 1.0 / len(tickers) for ticker in tickers}

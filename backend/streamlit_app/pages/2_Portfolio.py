@@ -1,12 +1,14 @@
-import streamlit as st
 import os
 import sys
+
+import streamlit as st
 
 backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if backend_path not in sys.path:
     sys.path.append(backend_path)
 
 from styles import PREMIUM_CSS
+
 st.set_page_config(page_title="Portfolio | FinSight", layout="wide")
 st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
 

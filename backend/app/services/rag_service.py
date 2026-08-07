@@ -1,9 +1,9 @@
-import logging
-import chromadb
-from chromadb.config import Settings
-from chromadb.utils import embedding_functions
-import os
 import datetime
+import logging
+import os
+
+import chromadb
+from chromadb.utils import embedding_functions
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import CrossEncoder
 

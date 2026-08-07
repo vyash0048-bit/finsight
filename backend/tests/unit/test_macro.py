@@ -1,7 +1,7 @@
-import pytest
 import pandas as pd
-from app.services.macro_service import get_macro_context
 from app.schemas.macro import MacroContext
+from app.services.macro_service import get_macro_context
+
 
 def test_get_macro_context_success(mocker):
     # Mock yfinance history to return a fake dataframe

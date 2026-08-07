@@ -1,6 +1,6 @@
-import pytest
-from app.services.fundamentals_service import get_fundamentals
 from app.schemas.fundamentals import FundamentalData
+from app.services.fundamentals_service import get_fundamentals
+
 
 def test_get_fundamentals_success(mocker):
     mock_info = {

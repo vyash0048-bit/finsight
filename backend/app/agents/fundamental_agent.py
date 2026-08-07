@@ -1,6 +1,7 @@
-from app.agents.base import BaseAgent, AgentState
+
+from app.agents.base import AgentState, BaseAgent
 from pydantic import BaseModel, Field
-from typing import Optional
+
 
 class FundamentalOutputSchema(BaseModel):
     valuation_signal: str = Field(..., description="'UNDERVALUED', 'OVERVALUED', or 'FAIRLY_VALUED'")

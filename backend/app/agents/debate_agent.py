@@ -1,6 +1,7 @@
 from app.agents.base import BaseAgent
 from pydantic import BaseModel, Field
 
+
 class DebateOutputSchema(BaseModel):
     conflict_detected: bool = Field(..., description="True if there is a major conflict between agents (e.g. Technical says strong buy, Risk says extremely high risk).")
     resolution: str = Field(..., description="Resolution or synthesis of the conflict, or 'No major conflict' if false.")

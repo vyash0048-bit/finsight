@@ -1,11 +1,12 @@
+
 from app.agents.base import BaseAgent
 from pydantic import BaseModel, Field
-from typing import List
+
 
 class ReportOutputSchema(BaseModel):
     executive_summary: str = Field(..., description="High level summary of the asset.")
     final_recommendation: str = Field(..., description="STRONG BUY, BUY, HOLD, SELL, STRONG SELL")
-    key_drivers: List[str] = Field(..., description="The main factors driving this recommendation.")
+    key_drivers: list[str] = Field(..., description="The main factors driving this recommendation.")
 
 class ReportAgent(BaseAgent):
     @property

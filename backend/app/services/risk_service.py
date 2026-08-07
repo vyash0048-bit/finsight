@@ -1,7 +1,8 @@
+import logging
+
 import numpy as np
 import pandas as pd
 from app.schemas.risk import RiskSnapshot
-import logging
 
 logger = logging.getLogger(__name__)
 

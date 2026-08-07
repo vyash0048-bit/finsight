@@ -1,4 +1,5 @@
 import logging
+
 import yfinance as yf
 from app.schemas.fundamentals import FundamentalData
 
@@ -29,5 +30,5 @@ def get_fundamentals(ticker: str) -> FundamentalData:
             recommendation_key=info.get("recommendationKey")
         )
     except Exception as e:
-        logger.error(f"Error fetching fundamentals for {ticker}: {str(e)}")
+        logger.error(f"Error fetching fundamentals for {ticker}: {e!s}")
         return FundamentalData(ticker=ticker)

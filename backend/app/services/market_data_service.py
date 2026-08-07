@@ -1,14 +1,12 @@
 import json
 import logging
-from pathlib import Path
 from datetime import datetime
-from typing import Optional
+from pathlib import Path
 
 import pandas as pd
 import yfinance as yf
+from app.schemas.market_data import PriceBar, PriceHistory
 from tenacity import retry, stop_after_attempt, wait_exponential
-
-from app.schemas.market_data import PriceHistory, PriceBar
 
 logger = logging.getLogger(__name__)
 
@@ -58,8 +56,8 @@ def get_price_history(ticker: str, period: str = "1mo", use_cache: bool = True) 
     try:
         df = _fetch_from_yfinance(ticker, period)
     except Exception as e:
-        logger.error(f"Failed to fetch market data for {ticker}: {str(e)}")
-        raise MarketDataError(f"Market data service unavailable: {str(e)}")
+        logger.error(f"Failed to fetch market data for {ticker}: {e!s}")
+        raise MarketDataError(f"Market data service unavailable: {e!s}")
         
     # 3. Clean and Transform
     df.reset_index(inplace=True)

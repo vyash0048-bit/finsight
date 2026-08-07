@@ -1,20 +1,16 @@
-from logging.config import fileConfig
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
-from alembic import context
-
 import os
 import sys
+from logging.config import fileConfig
+
+from alembic import context
+from sqlalchemy import engine_from_config, pool
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from app.core.config import settings
 from app.models.base import Base
+
 # Import all models here to register them with metadata
-from app.models.user import User
-from app.models.portfolio import Portfolio
-from app.models.price_bar import PriceBar
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

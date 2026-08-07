@@ -1,14 +1,11 @@
 import pytest
+from app.api.deps import get_db
+from app.main import app
+from app.models.base import Base
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-
-from app.main import app
-from app.api.deps import get_db
-from app.models.base import Base
-from app.models.user import User
-from app.models.portfolio import Portfolio # Required for SQLAlchemy relationship mapping
 
 # In-memory database setup for testing
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"

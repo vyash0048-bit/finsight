@@ -1,7 +1,9 @@
 import json
+
 import pytest
-from app.agents.technical_agent import TechnicalAgent
 from app.agents.risk_agent import RiskAgent
+from app.agents.technical_agent import TechnicalAgent
+
 
 @pytest.fixture
 def golden_dataset():

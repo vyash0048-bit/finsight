@@ -1,6 +1,7 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 from app.services.technical_service import get_technical_features
+
 
 def test_get_technical_features():
     # Generate 50 days of fake price data

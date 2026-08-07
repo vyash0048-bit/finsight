@@ -1,5 +1,5 @@
-import pytest
 from app.services.rag_service import ingest, retrieve
+
 
 def test_rag_integration_ingest_and_retrieve():
     # Arrange: Create a mock document with known facts

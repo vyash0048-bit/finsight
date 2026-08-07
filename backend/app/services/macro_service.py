@@ -1,6 +1,6 @@
 import logging
+
 import yfinance as yf
-import pandas as pd
 from app.schemas.macro import MacroContext
 
 logger = logging.getLogger(__name__)
@@ -43,5 +43,5 @@ def get_macro_context() -> MacroContext:
             market_volatility_vix=vix_price
         )
     except Exception as e:
-        logger.error(f"Error fetching macro context: {str(e)}")
+        logger.error(f"Error fetching macro context: {e!s}")
         return MacroContext(sp500_trend="UNKNOWN")

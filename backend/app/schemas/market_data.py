@@ -1,6 +1,7 @@
 from datetime import datetime
-from typing import List, Optional
+
 from pydantic import BaseModel
+
 
 class PriceBar(BaseModel):
     timestamp: datetime
@@ -14,4 +15,4 @@ class PriceBar(BaseModel):
 class PriceHistory(BaseModel):
     ticker: str
     period: str
-    bars: List[PriceBar]
+    bars: list[PriceBar]

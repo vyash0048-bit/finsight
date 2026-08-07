@@ -1,12 +1,13 @@
-from app.agents.base import BaseAgent, AgentState
+
+from app.agents.base import AgentState, BaseAgent
 from pydantic import BaseModel, Field
-from typing import List
+
 
 class NewsOutputSchema(BaseModel):
     sentiment_score: float = Field(..., description="Overall sentiment score between -1.0 (very bearish) to 1.0 (very bullish)")
-    key_themes: List[str] = Field(..., description="List of 2-3 main themes found in the news")
-    bullish_points: List[str] = Field(..., description="Key bullish factors extracted from news")
-    bearish_points: List[str] = Field(..., description="Key bearish factors extracted from news")
+    key_themes: list[str] = Field(..., description="List of 2-3 main themes found in the news")
+    bullish_points: list[str] = Field(..., description="Key bullish factors extracted from news")
+    bearish_points: list[str] = Field(..., description="Key bearish factors extracted from news")
     summary: str = Field(..., description="A concise 2-sentence summary of the news sentiment")
 
 class NewsAgent(BaseAgent):

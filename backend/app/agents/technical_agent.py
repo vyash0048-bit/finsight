@@ -1,12 +1,13 @@
-from app.agents.base import BaseAgent, AgentState
-from pydantic import BaseModel, Field
-from typing import List
+
 import pandas as pd
+from app.agents.base import AgentState, BaseAgent
+from pydantic import BaseModel, Field
+
 
 class TechnicalOutputSchema(BaseModel):
     trend: str = Field(..., description="Current trend: 'BULLISH', 'BEARISH', or 'NEUTRAL'")
-    support_levels: List[float] = Field(..., description="Key price support levels")
-    resistance_levels: List[float] = Field(..., description="Key price resistance levels")
+    support_levels: list[float] = Field(..., description="Key price support levels")
+    resistance_levels: list[float] = Field(..., description="Key price resistance levels")
     momentum_signal: str = Field(..., description="Momentum indicator signal, e.g. 'OVERSOLD', 'OVERBOUGHT'")
     summary: str = Field(..., description="Concise technical summary and price action observation")
 
@@ -51,9 +52,9 @@ class TechnicalAgent(BaseAgent):
         
 # For LangGraph integration
 def technical_node(state: AgentState) -> dict:
+    import pandas as pd
     from app.services.market_data_service import get_price_history
     from app.services.technical_service import get_technical_features
-    import pandas as pd
     
     ticker = state["ticker"]
     history = get_price_history(ticker, period="3mo", use_cache=True)

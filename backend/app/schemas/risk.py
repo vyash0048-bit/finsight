@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+
 class RiskSnapshot(BaseModel):
     annualized_volatility: float = Field(..., description="Annualized volatility of returns")
     max_drawdown: float = Field(..., description="Maximum drawdown observed in the period")

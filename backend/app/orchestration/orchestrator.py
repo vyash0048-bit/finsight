@@ -1,13 +1,13 @@
 import asyncio
-from typing import Dict, Any
 
-from app.agents.news_agent import NewsAgent
-from app.agents.technical_agent import TechnicalAgent
+from app.agents.debate_agent import DebateAgent
 from app.agents.fundamental_agent import FundamentalAgent
 from app.agents.macro_agent import MacroAgent
-from app.agents.risk_agent import RiskAgent
-from app.agents.debate_agent import DebateAgent
+from app.agents.news_agent import NewsAgent
 from app.agents.report_agent import ReportAgent
+from app.agents.risk_agent import RiskAgent
+from app.agents.technical_agent import TechnicalAgent
+
 
 class Orchestrator:
     def __init__(self, timeout: int = 15):
@@ -15,7 +15,8 @@ class Orchestrator:
         
     async def run_agent_safe(self, agent, func, *args) -> dict:
         import time
-        from app.core.metrics import agent_run_total, agent_run_duration_seconds
+
+        from app.core.metrics import agent_run_duration_seconds, agent_run_total
         
         start_time = time.time()
         try:
@@ -28,7 +29,7 @@ class Orchestrator:
             agent_run_duration_seconds.labels(agent_name=agent.name).observe(duration)
             agent_run_total.labels(agent_name=agent.name, status=out.status).inc()
             return {"status": out.status, "data": out.data, "summary": out.summary}
-        except asyncio.TimeoutError:
+        except TimeoutError:
             duration = time.time() - start_time
             agent_run_duration_seconds.labels(agent_name=agent.name).observe(duration)
             agent_run_total.labels(agent_name=agent.name, status="error").inc()
@@ -37,7 +38,7 @@ class Orchestrator:
             duration = time.time() - start_time
             agent_run_duration_seconds.labels(agent_name=agent.name).observe(duration)
             agent_run_total.labels(agent_name=agent.name, status="error").inc()
-            return {"status": "error", "summary": f"{agent.name} failed: {str(e)}"}
+            return {"status": "error", "summary": f"{agent.name} failed: {e!s}"}
 
     async def run_research(self, ticker: str) -> dict:
         # Phase 1: Parallel dispatch of base worker agents

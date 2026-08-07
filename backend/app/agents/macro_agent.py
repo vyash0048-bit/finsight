@@ -1,11 +1,12 @@
-from app.agents.base import BaseAgent, AgentState
+
+from app.agents.base import BaseAgent
 from pydantic import BaseModel, Field
-from typing import List
+
 
 class MacroOutputSchema(BaseModel):
     market_regime: str = Field(..., description="'BULL_MARKET', 'BEAR_MARKET', or 'VOLATILE'")
     interest_rate_impact: str = Field(..., description="Expected impact of current interest rates on the asset")
-    key_macro_events: List[str] = Field(..., description="List of major macroeconomic factors (e.g. inflation, Fed meetings) impacting the asset")
+    key_macro_events: list[str] = Field(..., description="List of major macroeconomic factors (e.g. inflation, Fed meetings) impacting the asset")
     summary: str = Field(..., description="Concise macro environment summary")
 
 class MacroAgent(BaseAgent):

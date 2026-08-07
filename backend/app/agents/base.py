@@ -1,8 +1,10 @@
-from typing import TypedDict, Annotated, List, Any, Dict, Optional, Type
+import json
 import operator
 from abc import ABC, abstractmethod
+from typing import Annotated, Any, TypedDict
+
 from pydantic import BaseModel
-import json
+
 
 class AgentState(TypedDict):
     ticker: str
@@ -10,12 +12,12 @@ class AgentState(TypedDict):
     technical_analysis: str
     news_analysis: str
     final_decision: str
-    messages: Annotated[List[str], operator.add]
+    messages: Annotated[list[str], operator.add]
 
 class AgentOutput(BaseModel):
     agent_name: str
     status: str
-    data: Dict[str, Any]
+    data: dict[str, Any]
     summary: str
 
 class BaseAgent(ABC):
@@ -28,20 +30,17 @@ class BaseAgent(ABC):
     @abstractmethod
     def system_prompt(self) -> str:
         """The tightly scoped role/system prompt for this agent."""
-        pass
         
     @property
     @abstractmethod
-    def output_schema(self) -> Type[BaseModel]:
+    def output_schema(self) -> type[BaseModel]:
         """The Pydantic schema expected as output from the LLM."""
-        pass
         
     @abstractmethod
     def get_tools(self) -> list:
         """Return a list of tools/functions this agent has access to."""
-        pass
 
-    def run(self, context: Dict[str, Any]) -> AgentOutput:
+    def run(self, context: dict[str, Any]) -> AgentOutput:
         """
         Executes the agent's logic given the context.
         """
@@ -67,7 +66,7 @@ class BaseAgent(ABC):
             summary=f"{self.name} completed analysis successfully."
         )
         
-    def build_prompt(self, context: Dict[str, Any]) -> str:
+    def build_prompt(self, context: dict[str, Any]) -> str:
         """
         Combine system prompt, context, and instruction.
         """

@@ -1,8 +1,7 @@
-import pytest
-from datetime import datetime, timezone
 
-from app.schemas.news import NewsArticle
+import pytest
 from app.services.news_service import get_recent_news
+
 
 @pytest.fixture
 def anyio_backend():

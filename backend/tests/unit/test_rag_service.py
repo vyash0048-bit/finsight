@@ -1,5 +1,5 @@
-import pytest
 from app.services.rag_service import chunk_text
+
 
 def test_chunk_text():
     # Arrange

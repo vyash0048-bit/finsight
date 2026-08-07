@@ -1,7 +1,5 @@
 import asyncio
-import json
 import os
-import sys
 
 # Load env file manually
 env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
@@ -14,6 +12,7 @@ if os.path.exists(env_path):
                 os.environ[key.strip().upper()] = val.strip().strip('"').strip("'")
 
 from app.orchestration.orchestrator import Orchestrator
+
 
 async def run_for_ticker(ticker: str):
     print(f"\n{'='*50}\nStarting Research for {ticker}...\n{'='*50}")

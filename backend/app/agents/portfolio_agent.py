@@ -1,6 +1,7 @@
+
 from app.agents.base import BaseAgent
 from pydantic import BaseModel, Field
-from typing import Dict, List
+
 
 class PortfolioOutputSchema(BaseModel):
     explanation: str = Field(..., description="Plain-English explanation of the allocated weights. Must explicitly state that this is a model-dependent estimate and explicitly list the assumptions made (e.g., historical lookback window, mean-variance max-sharpe optimization).")
@@ -23,7 +24,7 @@ class PortfolioAgent(BaseAgent):
     def get_tools(self) -> list:
         return ["optimize_portfolio"]
         
-    def execute(self, tickers: List[str]):
+    def execute(self, tickers: list[str]):
         try:
             from app.services.portfolio_service import optimize_portfolio
             weights = optimize_portfolio(tickers)

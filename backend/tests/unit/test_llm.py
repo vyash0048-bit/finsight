@@ -1,6 +1,6 @@
-import pytest
 from app.services.llm_client import LLMClient
 from pydantic import BaseModel
+
 
 class DummySchema(BaseModel):
     sentiment: str

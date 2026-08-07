@@ -1,11 +1,10 @@
 import logging
-from typing import List
-from datetime import datetime, timezone
-import yfinance as yf
-from motor.motor_asyncio import AsyncIOMotorClient
+from datetime import UTC, datetime
 
+import yfinance as yf
 from app.core.config import settings
 from app.schemas.news import NewsArticle
+from motor.motor_asyncio import AsyncIOMotorClient
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +19,7 @@ def get_db():
         _db = _client[settings.MONGO_DB]
     return _db
 
-async def get_recent_news(ticker: str, days: int = 7) -> List[NewsArticle]:
+async def get_recent_news(ticker: str, days: int = 7) -> list[NewsArticle]:
     """
     Fetch recent news for a ticker and deduplicate them in MongoDB.
     """
@@ -36,7 +35,7 @@ async def get_recent_news(ticker: str, days: int = 7) -> List[NewsArticle]:
     for item in raw_news:
         try:
             # yfinance returns Unix timestamp in seconds for 'providerPublishTime'
-            published_at = datetime.fromtimestamp(item.get("providerPublishTime", 0), tz=timezone.utc)
+            published_at = datetime.fromtimestamp(item.get("providerPublishTime", 0), tz=UTC)
             
             # Simple deduplication: Check if we already have an article with the exact same URL or same Title
             existing = await news_collection.find_one({
@@ -64,7 +63,7 @@ async def get_recent_news(ticker: str, days: int = 7) -> List[NewsArticle]:
             articles.append(article)
             
         except Exception as e:
-            logger.error(f"Error parsing news item for {ticker}: {str(e)}")
+            logger.error(f"Error parsing news item for {ticker}: {e!s}")
             continue
             
     return articles

@@ -1,14 +1,15 @@
+
 from pydantic import BaseModel
-from typing import Optional
+
 
 class FundamentalData(BaseModel):
     ticker: str
-    market_cap: Optional[int] = None
-    trailing_pe: Optional[float] = None
-    forward_pe: Optional[float] = None
-    eps_trailing: Optional[float] = None
-    eps_forward: Optional[float] = None
-    dividend_yield: Optional[float] = None
-    profit_margin: Optional[float] = None
-    operating_margin: Optional[float] = None
-    recommendation_key: Optional[str] = None
+    market_cap: int | None = None
+    trailing_pe: float | None = None
+    forward_pe: float | None = None
+    eps_trailing: float | None = None
+    eps_forward: float | None = None
+    dividend_yield: float | None = None
+    profit_margin: float | None = None
+    operating_margin: float | None = None
+    recommendation_key: str | None = None

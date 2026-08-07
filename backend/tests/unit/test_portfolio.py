@@ -1,9 +1,7 @@
-import pytest
-import pandas as pd
-from app.services.portfolio_service import optimize_portfolio
-from app.agents.portfolio_agent import portfolio_node, PortfolioAgent
 from app.agents.base import AgentOutput
-from unittest.mock import patch
+from app.agents.portfolio_agent import PortfolioAgent, portfolio_node
+from app.services.portfolio_service import optimize_portfolio
+
 
 def test_optimize_portfolio(mocker):
     # Mock price history

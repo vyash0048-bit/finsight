@@ -1,13 +1,14 @@
-import pytest
-import pandas as pd
-from datetime import datetime, timezone
+from datetime import UTC
 
-from app.services.market_data_service import get_price_history, MarketDataError
+import pandas as pd
+import pytest
+from app.services.market_data_service import MarketDataError, get_price_history
+
 
 @pytest.fixture
 def mock_yfinance(mocker):
     # Create a mock dataframe that yfinance would return
-    dates = pd.date_range(start="2024-01-01", periods=3, tz=timezone.utc)
+    dates = pd.date_range(start="2024-01-01", periods=3, tz=UTC)
     mock_df = pd.DataFrame({
         'Open': [100.0, 101.0, 102.0],
         'High': [105.0, 106.0, 107.0],

@@ -1,12 +1,12 @@
+
 from app.agents.base import BaseAgent
 from pydantic import BaseModel, Field
-from typing import List, Optional
-from app.schemas.risk import RiskSnapshot
+
 
 class RiskOutputSchema(BaseModel):
     risk_score: int = Field(..., description="Overall risk score from 1 (lowest) to 10 (highest)")
     volatility_assessment: str = Field(..., description="Assessment of recent price volatility and historical VaR")
-    downside_risks: List[str] = Field(..., description="List of primary downside risks or red flags")
+    downside_risks: list[str] = Field(..., description="List of primary downside risks or red flags")
     summary: str = Field(..., description="Concise risk profile summary")
 
 class RiskAgent(BaseAgent):
@@ -27,9 +27,9 @@ class RiskAgent(BaseAgent):
         
     def execute(self, ticker: str, findings: dict):
         try:
+            import pandas as pd
             from app.services.market_data_service import get_price_history
             from app.services.risk_service import compute_risk_metrics
-            import pandas as pd
             
             history = get_price_history(ticker, period="1y", use_cache=True)
             metrics_dict = {}

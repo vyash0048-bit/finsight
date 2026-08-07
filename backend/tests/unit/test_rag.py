@@ -1,6 +1,7 @@
-import pytest
 import datetime
+
 from app.services.rag_service import ingest, retrieve
+
 
 def test_chunk_and_store():
     # Simple test for basic chunking/storage logic

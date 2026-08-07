@@ -1,7 +1,10 @@
 from datetime import datetime
-from sqlalchemy import String, DateTime, Float, BigInteger, UniqueConstraint
+
+from sqlalchemy import BigInteger, DateTime, Float, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
+
 from .base import Base
+
 
 class PriceBar(Base):
     __tablename__ = "price_bars"

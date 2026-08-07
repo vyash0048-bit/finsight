@@ -1,8 +1,9 @@
+from unittest.mock import patch
+
 import pytest
-import asyncio
-from unittest.mock import patch, MagicMock
-from app.orchestration.orchestrator import Orchestrator
 from app.agents.base import AgentOutput
+from app.orchestration.orchestrator import Orchestrator
+
 
 @pytest.mark.asyncio
 async def test_orchestrator_error_isolation():

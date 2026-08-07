@@ -1,14 +1,14 @@
 import asyncio
 import logging
-import sys
 import os
+import sys
 
 # Ensure the backend directory is in the path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from app.api.deps import SessionLocal
-from app.services.market_data_service import get_price_history
 from app.models.price_bar import PriceBar
+from app.services.market_data_service import get_price_history
 from app.services.news_service import get_recent_news
 from app.services.rag_service import chunk_and_store_text
 
