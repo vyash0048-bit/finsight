@@ -55,7 +55,7 @@ async def create_research_report(
     logger.info(f"Anonymous user requested research report for {ticker}")
 
     try:
-        orchestrator = Orchestrator(timeout=15)
+        orchestrator = Orchestrator(timeout=25)
         result = await orchestrator.run_research(ticker)
     except Exception as e:
         logger.error(f"Orchestration failed for {ticker}: {e!s}")

@@ -10,7 +10,7 @@ from app.agents.technical_agent import TechnicalAgent
 
 
 class Orchestrator:
-    def __init__(self, timeout: int = 15):
+    def __init__(self, timeout: int = 25):
         self.timeout = timeout
         
     async def run_agent_safe(self, agent, func, *args) -> dict:
@@ -33,7 +33,7 @@ class Orchestrator:
             duration = time.time() - start_time
             agent_run_duration_seconds.labels(agent_name=agent.name).observe(duration)
             agent_run_total.labels(agent_name=agent.name, status="error").inc()
-            return {"status": "error", "summary": f"{agent.name} timed out."}
+            return {"status": "error", "summary": f"{agent.name} timed out after {self.timeout}s."}
         except Exception as e:
             duration = time.time() - start_time
             agent_run_duration_seconds.labels(agent_name=agent.name).observe(duration)
@@ -62,16 +62,20 @@ class Orchestrator:
             "macro": results[3]
         }
         
-        # Phase 2: Risk Agent (depends on all base findings)
+        # Phase 2: Risk Agent & Debate Agent (Run in parallel on base findings)
         risk = RiskAgent()
-        risk_out = await self.run_agent_safe(risk, risk.execute, ticker, findings)
+        debate_agent = DebateAgent()
+        
+        phase2_results = await asyncio.gather(
+            self.run_agent_safe(risk, risk.execute, ticker, findings),
+            self.run_agent_safe(debate_agent, debate_agent.execute, ticker, findings)
+        )
+        
+        risk_out = phase2_results[0]
+        debate_out = phase2_results[1]
         findings["risk"] = risk_out
         
-        # Phase 3: Conflict Detection / Debate Agent
-        debate_agent = DebateAgent()
-        debate_out = await self.run_agent_safe(debate_agent, debate_agent.execute, ticker, findings)
-        
-        # Phase 4: Final Synthesis (Supervisor)
+        # Phase 3: Final Synthesis (Supervisor)
         report_agent = ReportAgent()
         report_out = await self.run_agent_safe(report_agent, report_agent.execute, ticker, findings, debate_out)
         
