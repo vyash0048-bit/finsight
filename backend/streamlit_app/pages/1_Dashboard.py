@@ -1,18 +1,18 @@
-import asyncio
 import os
-import sys
+import requests
 
 import streamlit as st
-
-# Ensure backend modules are reachable
-backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-if backend_path not in sys.path:
-    sys.path.append(backend_path)
 
 from styles import PREMIUM_CSS
 
 st.set_page_config(page_title="Dashboard | FinSight", layout="wide")
 st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
+
+if not st.session_state.get("logged_in"):
+    st.warning("Please log in from the main page first.")
+    st.stop()
+
+API_URL = os.getenv("API_URL", "http://localhost:8000").rstrip("/")
 
 st.title("📊 Real-Time Swarm Research")
 
@@ -27,21 +27,22 @@ if st.button("🚀 Generate AI Report"):
     elif ticker in st.session_state["report_cache"]:
         st.success("Loaded from cache!")
     else:
-        # Progress indicator
         with st.spinner(f"Swarm is actively analyzing {ticker}... this usually takes 15-30 seconds."):
-            from app.orchestration.orchestrator import Orchestrator
-            
-            async def run_orchestrator():
-                orc = Orchestrator(timeout=45)
-                return await orc.run_research(ticker)
-                
+            headers = {"Authorization": f"Bearer {st.session_state.get('token')}"}
             try:
-                # Use standard asyncio run
-                result = asyncio.run(run_orchestrator())
-                st.session_state["report_cache"][ticker] = result
-                st.success(f"Analysis Complete for {ticker}!")
+                response = requests.post(
+                    f"{API_URL}/research/report", 
+                    json={"ticker": ticker},
+                    headers=headers,
+                    timeout=90
+                )
+                if response.status_code == 200:
+                    st.session_state["report_cache"][ticker] = response.json()
+                    st.success(f"Analysis Complete for {ticker}!")
+                else:
+                    st.error(f"API Error: {response.text}")
             except Exception as e:
-                st.error(f"Critical failure during orchestration: {e!s}")
+                st.error(f"Network error: {e!s}")
 
 # Render Report if it exists in cache
 if ticker and ticker in st.session_state["report_cache"]:

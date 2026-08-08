@@ -30,6 +30,19 @@ services:
       - key: PYTHONPATH
         value: /app
 
+  - type: web
+    name: finsight-frontend
+    runtime: docker
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile.frontend
+    plan: free
+    envVars:
+      - key: API_URL
+        fromService:
+          name: finsight-api
+          type: web
+          property: url
+
   - type: redis
     name: finsight-redis
     plan: free
