@@ -2,10 +2,8 @@ import datetime
 import logging
 import os
 
-import chromadb
-from chromadb.utils import embedding_functions
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from sentence_transformers import CrossEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +14,7 @@ _chroma_client = None
 def get_chroma_client():
     global _chroma_client
     if _chroma_client is None:
+        import chromadb
         chroma_path = os.getenv("CHROMA_PATH", ".cache/chroma")
         try:
             os.makedirs(chroma_path, exist_ok=True)
@@ -29,6 +28,7 @@ def get_chroma_client():
 def get_embedding_func():
     global _embedding_func
     if _embedding_func is None:
+        from chromadb.utils import embedding_functions
         _embedding_func = embedding_functions.DefaultEmbeddingFunction()
     return _embedding_func
 
@@ -36,6 +36,7 @@ def get_cross_encoder():
     global _cross_encoder
     if _cross_encoder is None:
         try:
+            from sentence_transformers import CrossEncoder
             _cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2', max_length=512)
         except Exception as e:
             logger.warning(f"Could not load cross_encoder: {e}")

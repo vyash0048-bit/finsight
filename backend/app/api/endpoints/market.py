@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-import pandas as pd
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
@@ -99,6 +99,7 @@ def get_technicals(
             detail=f"No price data available for {ticker}",
         )
 
+    import pandas as pd
     # Convert to DataFrame for the technical service
     df = pd.DataFrame([{
         "open": b.open, "high": b.high, "low": b.low,

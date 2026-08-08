@@ -1,10 +1,11 @@
 from typing import Any
 
-import pandas as pd
-import ta
 
 
-def get_technical_features(df: pd.DataFrame) -> dict[str, Any]:
+
+def get_technical_features(df: 'pd.DataFrame') -> dict[str, Any]:
+    import pandas as pd
+    import ta
     """
     Calculate SMA, EMA, RSI, MACD, and Bollinger Bands from a price DataFrame using the 'ta' library.
     Returns the latest indicator values and a simple rule-based signal.

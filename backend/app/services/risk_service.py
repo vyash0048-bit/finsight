@@ -1,13 +1,12 @@
 import logging
 
-import numpy as np
-import pandas as pd
-
 from app.schemas.risk import RiskSnapshot
 
 logger = logging.getLogger(__name__)
 
-def compute_risk_metrics(returns: pd.Series, risk_free_rate: float = 0.02) -> RiskSnapshot:
+def compute_risk_metrics(returns: 'pd.Series', risk_free_rate: float = 0.02) -> RiskSnapshot:
+    import numpy as np
+    import pandas as pd
     """
     Computes key risk metrics from a series of daily returns.
     Includes Volatility, Max Drawdown, Sharpe Ratio, and Historical VaR.

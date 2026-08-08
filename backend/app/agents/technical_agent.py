@@ -1,5 +1,4 @@
 
-import pandas as pd
 from pydantic import BaseModel, Field
 
 from app.agents.base import AgentState, BaseAgent
