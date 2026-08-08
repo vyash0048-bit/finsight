@@ -29,13 +29,15 @@ class NewsAgent(BaseAgent):
         
     def execute(self, ticker: str):
         try:
-            from app.services.rag_service import retrieve_and_rerank
-            results = retrieve_and_rerank(f"Latest important news and sentiment about {ticker}", ticker=ticker, k=5)
+            import yfinance as yf
+            stock = yf.Ticker(ticker)
+            raw_news = stock.news
             
-            context = {"ticker": ticker, "news_documents": []}
-            if results and results.get("documents") and results["documents"][0]:
-                context["news_documents"] = results["documents"][0]
+            # Simple fallback if yfinance news is empty
+            if not raw_news:
+                raw_news = [{"title": f"No recent news found for {ticker}.", "publisher": "System"}]
                 
+            context = {"ticker": ticker, "news_documents": raw_news[:5]}
             return self.run(context)
         except Exception as e:
             from app.agents.base import AgentOutput
