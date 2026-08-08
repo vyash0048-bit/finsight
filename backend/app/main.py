@@ -14,12 +14,7 @@ app = FastAPI(title="FinSight API", version="0.1.0")
 # ---------------------------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8501",   # Streamlit default
-        "http://localhost:3000",   # Common dev frontend
-        "http://127.0.0.1:8501",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
