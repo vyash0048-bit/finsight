@@ -17,6 +17,31 @@ services:
       timeout: 5s
       retries: 5
 
+  mongo:
+    image: mongo:7.0-jammy
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redisdata:/data
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   backend:
     build:
       context: ./backend
@@ -27,8 +52,14 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-finsight}:${POSTGRES_PASSWORD:-finsight}@postgres:5432/${POSTGRES_DB:-finsight}
       - SECRET_KEY=${SECRET_KEY:-changeme}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - MONGO_URL=mongodb://mongo:27017
+      - REDIS_URL=redis://redis:6379/0
     depends_on:
       postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -38,3 +69,5 @@ services:
 
 volumes:
   pgdata:
+  mongodata:
+  redisdata:

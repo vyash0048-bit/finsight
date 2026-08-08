@@ -10,7 +10,7 @@ from app.api.deps import SessionLocal
 from app.models.price_bar import PriceBar
 from app.services.market_data_service import get_price_history
 from app.services.news_service import get_recent_news
-from app.services.rag_service import chunk_and_store_text
+from app.services.rag_service import ingest as chunk_and_store_text
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -63,8 +63,12 @@ async def run_ingestion_for_ticker(ticker: str):
             }
             # Create a deterministic ID
             doc_id = f"{article.ticker}_{hash(article.url)}"
-            
-            n = chunk_and_store_text(doc_id, text_to_embed, metadata)
+            doc = {
+                "id": doc_id,
+                "text": text_to_embed,
+                "metadata": metadata
+            }
+            n = chunk_and_store_text(doc)
             chunks_added += n
             
         logger.info(f"[{ticker}] Embedded {chunks_added} chunks into ChromaDB.")
