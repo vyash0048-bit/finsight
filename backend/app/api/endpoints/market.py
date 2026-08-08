@@ -5,7 +5,6 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
-from app.api.deps import get_current_user
 from app.models.user import User
 from app.schemas.market_data import PriceHistory
 from app.services.market_data_service import MarketDataError, get_price_history
@@ -49,8 +48,7 @@ def _validate_ticker(ticker: str) -> str:
 @router.get("/price/{ticker}", response_model=PriceHistory)
 def get_price(
     ticker: str,
-    period: str = Query("1mo", description="Period for price history (e.g. '1mo', '3mo', '1y')"),
-    current_user: User = Depends(get_current_user),
+    period: str = Query("1mo", description="Period for price history (e.g. '1mo', '3mo', '1y')")
 ):
     """
     Retrieve historical OHLCV price bars for a ticker.
@@ -76,8 +74,7 @@ def get_price(
 
 @router.get("/technicals/{ticker}", response_model=TechnicalIndicators)
 def get_technicals(
-    ticker: str,
-    current_user: User = Depends(get_current_user),
+    ticker: str
 ):
     """
     Retrieve pre-computed technical indicators (RSI, MACD, Bollinger Bands, etc.)

@@ -6,7 +6,6 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
-from app.api.deps import get_current_user
 from app.models.user import User
 from app.services.rag_service import ingest, retrieve, retrieve_and_rerank
 
@@ -49,7 +48,6 @@ class SearchResponse(BaseModel):
 @router.post("/ingest", response_model=IngestResponse, status_code=status.HTTP_201_CREATED)
 def ingest_document(
     body: IngestRequest,
-    current_user: User = Depends(get_current_user),
 ):
     """
     Manually ingest and embed a document into the ChromaDB vector store.
@@ -82,7 +80,7 @@ def ingest_document(
             detail=f"Document ingestion failed: {e!s}",
         )
 
-    logger.info(f"User {current_user.id} ingested doc {doc_id} — {chunks_added} chunks")
+    logger.info(f"Anonymous user ingested doc {doc_id} — {chunks_added} chunks")
 
     return IngestResponse(chunks_added=chunks_added, document_id=doc_id)
 
@@ -92,8 +90,7 @@ def search_documents(
     query: str = Query(..., min_length=1, description="Search query"),
     ticker: str = Query(None, description="Optional ticker filter"),
     k: int = Query(3, ge=1, le=20, description="Number of results to return"),
-    rerank: bool = Query(True, description="Whether to use cross-encoder reranking"),
-    current_user: User = Depends(get_current_user),
+    rerank: bool = Query(True, description="Whether to use cross-encoder reranking")
 ):
     """
     Query the ChromaDB vector store directly.

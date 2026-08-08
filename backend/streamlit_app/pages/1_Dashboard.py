@@ -8,9 +8,6 @@ from styles import PREMIUM_CSS
 st.set_page_config(page_title="Dashboard | FinSight", layout="wide")
 st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
 
-if not st.session_state.get("logged_in"):
-    st.warning("Please log in from the main page first.")
-    st.stop()
 
 API_HOSTPORT = os.getenv("API_HOSTPORT", "localhost:8000")
 API_URL = f"http://{API_HOSTPORT}".rstrip("/")
@@ -29,12 +26,10 @@ if st.button("🚀 Generate AI Report"):
         st.success("Loaded from cache!")
     else:
         with st.spinner(f"Swarm is actively analyzing {ticker}... this usually takes 15-30 seconds."):
-            headers = {"Authorization": f"Bearer {st.session_state.get('token')}"}
             try:
                 response = requests.post(
                     f"{API_URL}/research/report", 
                     json={"ticker": ticker},
-                    headers=headers,
                     timeout=90
                 )
                 if response.status_code == 200:

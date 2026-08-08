@@ -5,7 +5,6 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field, field_validator
 
-from app.api.deps import get_current_user
 from app.models.user import User
 from app.orchestration.orchestrator import Orchestrator
 
@@ -46,7 +45,6 @@ _report_cache: dict[str, dict] = {}
 @router.post("/report", response_model=ResearchReport, status_code=status.HTTP_200_OK)
 async def create_research_report(
     body: ResearchRequest,
-    current_user: User = Depends(get_current_user),
 ):
     """
     Trigger a full multi-agent research report for a given ticker.
@@ -54,7 +52,7 @@ async def create_research_report(
     several seconds to complete.
     """
     ticker = body.ticker
-    logger.info(f"User {current_user.id} requested research report for {ticker}")
+    logger.info(f"Anonymous user requested research report for {ticker}")
 
     try:
         orchestrator = Orchestrator(timeout=60)
@@ -75,7 +73,6 @@ async def create_research_report(
 @router.get("/report/{ticker}", response_model=ResearchReport)
 def get_research_report(
     ticker: str,
-    current_user: User = Depends(get_current_user),
 ):
     """
     Retrieve a cached/historical research report for a ticker.
