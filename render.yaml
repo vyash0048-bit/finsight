@@ -37,11 +37,11 @@ services:
     dockerfilePath: ./backend/Dockerfile.frontend
     plan: free
     envVars:
-      - key: API_HOSTPORT
+      - key: API_HOST
         fromService:
           name: finsight-api
           type: web
-          property: hostport
+          property: host
 
   - type: redis
     name: finsight-redis

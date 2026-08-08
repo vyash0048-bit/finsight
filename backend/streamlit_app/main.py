@@ -4,6 +4,12 @@ import streamlit as st
 
 from styles import PREMIUM_CSS
 
+API_HOST = os.getenv("API_HOST")
+if API_HOST:
+    API_URL = f"https://{API_HOST}.onrender.com"
+else:
+    API_URL = "http://localhost:8000"
+
 st.set_page_config(
     page_title="FinSight | AI Swarm",
     page_icon="📈",

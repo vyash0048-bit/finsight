@@ -9,8 +9,13 @@ st.set_page_config(page_title="Dashboard | FinSight", layout="wide")
 st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
 
 
-API_HOSTPORT = os.getenv("API_HOSTPORT", "localhost:8000")
-API_URL = f"http://{API_HOSTPORT}".rstrip("/")
+API_HOST = os.getenv("API_HOST")
+if API_HOST:
+    # Render public URL format
+    API_URL = f"https://{API_HOST}.onrender.com"
+else:
+    # Local fallback
+    API_URL = "http://localhost:8000"
 
 st.title("📊 Real-Time Swarm Research")
 
