@@ -3,7 +3,7 @@ import logging
 import os
 
 
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +52,7 @@ def chunk_text(text: str) -> list[str]:
     """
     Helper function to chunk text respecting paragraphs and sentences.
     """
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
         chunk_overlap=50,
