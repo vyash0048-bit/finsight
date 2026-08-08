@@ -10,7 +10,7 @@ def index():
     if api_host:
         api_url = f"https://{api_host}" if api_host.endswith(".onrender.com") else f"https://{api_host}.onrender.com"
     else:
-        api_url = "http://localhost:8000"
+        api_url = "https://finsight-api-mseq.onrender.com"
     return render_template('index.html', api_url=api_url)
 
 @app.route('/health')
