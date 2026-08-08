@@ -7,7 +7,10 @@ app = Flask(__name__)
 def index():
     # Render public URL format
     api_host = os.environ.get("API_HOST", "")
-    api_url = f"https://{api_host}" if api_host else "http://localhost:8000"
+    if api_host:
+        api_url = f"https://{api_host}" if api_host.endswith(".onrender.com") else f"https://{api_host}.onrender.com"
+    else:
+        api_url = "http://localhost:8000"
     return render_template('index.html', api_url=api_url)
 
 @app.route('/health')

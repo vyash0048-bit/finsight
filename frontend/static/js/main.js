@@ -24,10 +24,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         loadingState.classList.remove('hidden');
-        loadingText.textContent = `Swarm is actively analyzing ${ticker}... This may take 1-2 minutes.`;
         
         try {
-            // Using the globally injected API_URL from index.html
+            // Step 1: Wake up the API if it's sleeping (Absorbs Render's 50s cold start)
+            loadingText.textContent = `Waking up AI Swarm (this can take 50s if sleeping)...`;
+            try {
+                await fetch(`${window.API_URL}/health`, { method: 'GET' });
+            } catch (e) {
+                console.log("Health check fetch failed, but continuing just in case.", e);
+            }
+
+            // Step 2: Request the report
+            loadingText.textContent = `Swarm is actively analyzing ${ticker}...`;
+            
             const response = await fetch(`${window.API_URL}/research/report`, {
                 method: 'POST',
                 headers: {
