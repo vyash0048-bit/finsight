@@ -87,6 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.textContent = driver;
                 driversList.appendChild(li);
             });
+        } else {
+            const banner = document.getElementById('recommendation-banner');
+            banner.className = 'recommendation-banner recommendation-sell';
+            document.getElementById('recommendation-value').textContent = 'ERROR';
+            document.getElementById('executive-summary').textContent = report.summary || 'Failed to generate report.';
+            document.getElementById('key-drivers-list').innerHTML = '<li>Check agent breakdowns below for details.</li>';
         }
 
         // Render Agents Grid
@@ -124,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const err = document.createElement('div');
                 err.className = 'agent-data-val';
                 err.style.color = 'var(--danger)';
-                err.textContent = 'Data unvailable';
+                err.textContent = agentData?.summary || 'Data unavailable';
                 card.appendChild(err);
             }
 
