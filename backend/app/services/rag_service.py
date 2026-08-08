@@ -9,30 +9,42 @@ from sentence_transformers import CrossEncoder
 
 logger = logging.getLogger(__name__)
 
-# Initialize cross-encoder for reranking
-try:
-    cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2', max_length=512)
-except Exception as e:
-    logger.warning(f"Could not load cross_encoder: {e}")
-    cross_encoder = None
+_cross_encoder = None
+_embedding_func = None
+_chroma_client = None
 
-# Initialize ChromaDB in persistent mode
-chroma_path = os.getenv("CHROMA_PATH", ".cache/chroma")
-try:
-    os.makedirs(chroma_path, exist_ok=True)
-except PermissionError:
-    logger.warning(f"Permission denied when creating {chroma_path}. Falling back to '.cache/chroma'.")
-    chroma_path = ".cache/chroma"
-    os.makedirs(chroma_path, exist_ok=True)
-client = chromadb.PersistentClient(path=chroma_path)
+def get_chroma_client():
+    global _chroma_client
+    if _chroma_client is None:
+        chroma_path = os.getenv("CHROMA_PATH", ".cache/chroma")
+        try:
+            os.makedirs(chroma_path, exist_ok=True)
+        except PermissionError:
+            logger.warning(f"Permission denied when creating {chroma_path}. Falling back to '.cache/chroma'.")
+            chroma_path = ".cache/chroma"
+            os.makedirs(chroma_path, exist_ok=True)
+        _chroma_client = chromadb.PersistentClient(path=chroma_path)
+    return _chroma_client
 
-# Default embedding function uses all-MiniLM-L6-v2 via onnx
-embedding_func = embedding_functions.DefaultEmbeddingFunction()
+def get_embedding_func():
+    global _embedding_func
+    if _embedding_func is None:
+        _embedding_func = embedding_functions.DefaultEmbeddingFunction()
+    return _embedding_func
+
+def get_cross_encoder():
+    global _cross_encoder
+    if _cross_encoder is None:
+        try:
+            _cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2', max_length=512)
+        except Exception as e:
+            logger.warning(f"Could not load cross_encoder: {e}")
+    return _cross_encoder
 
 def get_collection(collection_name: str = "news"):
-    return client.get_or_create_collection(
+    return get_chroma_client().get_or_create_collection(
         name=collection_name,
-        embedding_function=embedding_func
+        embedding_function=get_embedding_func()
     )
 
 def chunk_text(text: str) -> list[str]:
@@ -104,7 +116,8 @@ def retrieve_and_rerank(query: str, ticker: str = None, k: int = 3, collection_n
     initial_k = k * 5
     results = retrieve(query, ticker=ticker, k=initial_k, collection_name=collection_name)
     
-    if not results or not results["documents"] or not results["documents"][0] or cross_encoder is None:
+    ce = get_cross_encoder()
+    if not results or not results["documents"] or not results["documents"][0] or ce is None:
         return results
         
     docs = results["documents"][0]
@@ -115,7 +128,7 @@ def retrieve_and_rerank(query: str, ticker: str = None, k: int = 3, collection_n
     pairs = [[query, doc] for doc in docs]
     
     # Predict relevance scores
-    scores = cross_encoder.predict(pairs)
+    scores = ce.predict(pairs)
     
     # Pair up the scores with the results and sort descending by score
     scored_docs = list(zip(scores, ids, docs, metadatas))
