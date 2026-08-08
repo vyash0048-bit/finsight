@@ -30,12 +30,12 @@ if st.button("🚀 Generate AI Report"):
     elif ticker in st.session_state["report_cache"]:
         st.success("Loaded from cache!")
     else:
-        with st.spinner(f"Swarm is actively analyzing {ticker}... this usually takes 15-30 seconds."):
+        with st.spinner(f"Swarm is actively analyzing {ticker}... This may take 1-2 minutes (especially if waking from sleep)."):
             try:
                 response = requests.post(
                     f"{API_URL}/research/report", 
                     json={"ticker": ticker},
-                    timeout=90
+                    timeout=300
                 )
                 if response.status_code == 200:
                     st.session_state["report_cache"][ticker] = response.json()
