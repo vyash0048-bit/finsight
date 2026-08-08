@@ -13,7 +13,8 @@ st.set_page_config(
 
 st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
 
-API_URL = os.getenv("API_URL", "http://localhost:8000").rstrip("/")
+API_HOSTPORT = os.getenv("API_HOSTPORT", "localhost:8000")
+API_URL = f"http://{API_HOSTPORT}".rstrip("/")
 
 def login(email, password):
     response = requests.post(f"{API_URL}/auth/login", data={"username": email, "password": password})

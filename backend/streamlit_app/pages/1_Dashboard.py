@@ -12,7 +12,8 @@ if not st.session_state.get("logged_in"):
     st.warning("Please log in from the main page first.")
     st.stop()
 
-API_URL = os.getenv("API_URL", "http://localhost:8000").rstrip("/")
+API_HOSTPORT = os.getenv("API_HOSTPORT", "localhost:8000")
+API_URL = f"http://{API_HOSTPORT}".rstrip("/")
 
 st.title("📊 Real-Time Swarm Research")
 
