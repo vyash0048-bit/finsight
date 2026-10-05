@@ -1,0 +1,52 @@
+services:
+  # -------------------------
+  # BACKEND API
+  # -------------------------
+  - type: web
+    name: finsight-backend
+    env: docker
+    dockerContext: backend
+    dockerfilePath: backend/Dockerfile
+    plan: free
+    healthCheckPath: /docs  # or /health if you have one
+    envVars:
+      # Render dynamically provides the DB connection string
+      - key: DATABASE_URL
+        fromDatabase:
+          name: finsight-postgres
+          property: connectionString
+      - key: ENV
+        value: production
+      # You need to provide this manually via Render Dashboard
+      - key: MONGO_URL
+        sync: false
+      # External APIs (Sync: false means you must enter them in the Render Dashboard)
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: FINNHUB_API_KEY
+        sync: false
+
+  # -------------------------
+  # FRONTEND APP
+  # -------------------------
+  - type: web
+    name: finsight-frontend
+    env: docker
+    dockerContext: frontend
+    dockerfilePath: frontend/Dockerfile
+    plan: free
+    envVars:
+      - key: API_HOST
+        fromService:
+          type: web
+          name: finsight-backend
+          property: host
+
+databases:
+  # -------------------------
+  # POSTGRES DATABASE
+  # -------------------------
+  - name: finsight-postgres
+    plan: free
+    databaseName: finsight_db
+    user: finsight_user
