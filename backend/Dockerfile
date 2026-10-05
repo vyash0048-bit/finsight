@@ -8,10 +8,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY requirements.txt .
+COPY requirements.docker.txt .
 
-# Use uv for extremely fast deterministic builds
-RUN pip install uv && uv pip install --system --no-cache -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.docker.txt
 
 # Stage 2: Production Runtime
 FROM python:3.12-slim
@@ -24,6 +23,9 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy app source code
 COPY . .
+
+# Install any local wheel patches (avoids needing network in stage 2)
+RUN pip install --no-cache-dir --no-deps .packages/*.whl 2>/dev/null || true
 
 # Set env vars to not buffer logs and explicitly set PYTHONPATH
 ENV PYTHONUNBUFFERED=1
@@ -38,6 +40,6 @@ USER finsight
 
 EXPOSE 8000
 
-# Health check is managed by Render via render.yaml healthCheckPath
+# Health check configured via docker-compose
 
 CMD alembic upgrade head 2>&1 || echo "Migration skipped"; exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}

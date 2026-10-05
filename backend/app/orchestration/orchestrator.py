@@ -1,3 +1,7 @@
+import numpy  # noqa: F401 — eager import to prevent circular import race in threads
+import pandas  # noqa: F401
+import yfinance  # noqa: F401
+
 import asyncio
 
 from app.agents.debate_agent import DebateAgent
@@ -10,7 +14,7 @@ from app.agents.technical_agent import TechnicalAgent
 
 
 class Orchestrator:
-    def __init__(self, timeout: int = 25):
+    def __init__(self, timeout: int = 60):
         self.timeout = timeout
         
     async def run_agent_safe(self, agent, func, *args) -> dict:

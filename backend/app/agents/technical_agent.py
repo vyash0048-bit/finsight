@@ -29,6 +29,8 @@ class TechnicalAgent(BaseAgent):
         
     def execute(self, ticker: str):
         try:
+            import pandas as pd
+
             from app.services.market_data_service import get_price_history
             from app.services.technical_service import get_technical_features
             

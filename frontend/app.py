@@ -5,12 +5,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    # Render public URL format
-    api_host = os.environ.get("API_HOST", "")
-    if api_host:
-        api_url = f"https://{api_host}" if api_host.endswith(".onrender.com") else f"https://{api_host}.onrender.com"
+    api_host = os.environ.get("API_HOST", "localhost:8000")
+    if not api_host.startswith("http"):
+        api_url = f"http://{api_host}"
     else:
-        api_url = "https://finsight-api-mseq.onrender.com"
+        api_url = api_host
     return render_template('index.html', api_url=api_url)
 
 @app.route('/health')

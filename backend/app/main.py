@@ -39,11 +39,28 @@ async def http_metrics_middleware(request: Request, call_next):
     return response
 
 # ---------------------------------------------------------------------------
-# Health Check
+# Frontend Serving (For Hugging Face / Single Port Deployments)
 # ---------------------------------------------------------------------------
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to FinSight API"}
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+import os
+
+# Serve static files from the frontend directory
+frontend_static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/static"))
+if os.path.exists(frontend_static_dir):
+    app.mount("/static", StaticFiles(directory=frontend_static_dir), name="static")
+
+frontend_templates_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/templates"))
+if os.path.exists(frontend_templates_dir):
+    templates = Jinja2Templates(directory=frontend_templates_dir)
+
+    @app.get("/")
+    def read_root(request: Request):
+        return templates.TemplateResponse("index.html", {"request": request, "api_url": ""})
+else:
+    @app.get("/")
+    def read_root():
+        return {"message": "Welcome to FinSight API"}
 
 @app.get("/health")
 def health_check():
