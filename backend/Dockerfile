@@ -17,12 +17,17 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+# Create a non-root user for security
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+RUN useradd -m finsight
+
 # Copy python dependencies from builder
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Copy app source code
-COPY . .
+# Copy app source code with proper ownership
+COPY --chown=finsight:finsight . .
 
 # Install any local wheel patches (avoids needing network in stage 2)
 RUN pip install --no-cache-dir --no-deps .packages/*.whl 2>/dev/null || true
@@ -30,11 +35,6 @@ RUN pip install --no-cache-dir --no-deps .packages/*.whl 2>/dev/null || true
 # Set env vars to not buffer logs and explicitly set PYTHONPATH
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
-
-# Create a non-root user for security
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/*
-RUN useradd -m finsight
 
 USER finsight
 
