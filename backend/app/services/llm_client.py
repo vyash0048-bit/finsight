@@ -78,7 +78,7 @@ class LLMClient:
                 last_error = str(je)
             except Exception as e:
                 logger.error(f"LLM API Error: {e}")
-                break
+                raise
                 
             attempt += 1
             

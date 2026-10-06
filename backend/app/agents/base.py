@@ -45,26 +45,34 @@ class BaseAgent(ABC):
         Executes the agent's logic given the context.
         """
         prompt = self.build_prompt(context)
-        llm_response = self.llm_client.call_llm(
-            prompt=prompt, 
-            schema=self.output_schema,
-            system_prompt=self.system_prompt
-        )
-        
-        if not llm_response:
+        try:
+            llm_response = self.llm_client.call_llm(
+                prompt=prompt, 
+                schema=self.output_schema,
+                system_prompt=self.system_prompt
+            )
+            
+            if not llm_response:
+                return AgentOutput(
+                    agent_name=self.name,
+                    status="error",
+                    data={},
+                    summary="LLM failed to produce valid output."
+                )
+                
+            return AgentOutput(
+                agent_name=self.name,
+                status="success",
+                data=json.loads(llm_response.model_dump_json()),
+                summary=f"{self.name} completed analysis successfully."
+            )
+        except Exception as e:
             return AgentOutput(
                 agent_name=self.name,
                 status="error",
                 data={},
-                summary="LLM failed to produce valid output."
+                summary=f"LLM API Error: {str(e)}"
             )
-            
-        return AgentOutput(
-            agent_name=self.name,
-            status="success",
-            data=json.loads(llm_response.model_dump_json()),
-            summary=f"{self.name} completed analysis successfully."
-        )
         
     def build_prompt(self, context: dict[str, Any]) -> str:
         """
