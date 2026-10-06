@@ -1,4 +1,9 @@
-from app.services.rag_service import get_chroma_client, ingest, retrieve, retrieve_and_rerank
+from app.services.rag_service import (
+    get_chroma_client,
+    ingest,
+    retrieve,
+    retrieve_and_rerank,
+)
 
 
 def test_rag_evaluation():
