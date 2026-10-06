@@ -7,7 +7,10 @@ app = Flask(__name__)
 def index():
     api_host = os.environ.get("API_HOST", "localhost:8000")
     if not api_host.startswith("http"):
-        api_url = f"http://{api_host}"
+        if "localhost" in api_host or "127.0.0.1" in api_host:
+            api_url = f"http://{api_host}"
+        else:
+            api_url = f"https://{api_host}"
     else:
         api_url = api_host
     return render_template('index.html', api_url=api_url)
