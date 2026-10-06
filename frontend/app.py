@@ -10,6 +10,8 @@ def index():
         if "localhost" in api_host or "127.0.0.1" in api_host:
             api_url = f"http://{api_host}"
         else:
+            if "." not in api_host:
+                api_host = f"{api_host}.onrender.com"
             api_url = f"https://{api_host}"
     else:
         api_url = api_host
