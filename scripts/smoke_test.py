@@ -1,6 +1,7 @@
-import requests
 import sys
-import time
+
+import requests
+
 
 def run_smoke_test(base_url: str):
     print(f"Starting smoke tests against {base_url}...")
@@ -11,7 +12,7 @@ def run_smoke_test(base_url: str):
         res.raise_for_status()
         assert res.json().get("status") == "ok"
         print("✅ [PASS] /health endpoint is alive and well.")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"❌ [FAIL] /health endpoint failed: {e}")
         sys.exit(1)
 
@@ -21,7 +22,7 @@ def run_smoke_test(base_url: str):
         # We expect a 401 Unauthorized for a protected route without a token
         assert res.status_code == 401, f"Expected 401, got {res.status_code}"
         print("✅ [PASS] /auth/me correctly rejected unauthenticated access.")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"❌ [FAIL] /auth/me rejection test failed: {e}")
         sys.exit(1)
         

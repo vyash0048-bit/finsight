@@ -71,7 +71,7 @@ class BaseAgent(ABC):
                 agent_name=self.name,
                 status="error",
                 data={},
-                summary=f"LLM API Error: {str(e)}"
+                summary=f"LLM API Error: {e!s}"
             )
         
     def build_prompt(self, context: dict[str, Any]) -> str:
