@@ -1,11 +1,8 @@
 import logging
-from typing import Any
 
-
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
-from app.models.user import User
 from app.schemas.market_data import PriceHistory
 from app.services.market_data_service import MarketDataError, get_price_history
 from app.services.technical_service import get_technical_features

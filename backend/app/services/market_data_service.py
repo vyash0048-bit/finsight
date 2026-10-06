@@ -3,7 +3,6 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
-
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from app.schemas.market_data import PriceBar, PriceHistory
@@ -27,7 +26,6 @@ def _fetch_from_yfinance(ticker: str, period: str):
     Fetch data from Yahoo Finance. This function is wrapped with tenacity
     to automatically retry on network failures.
     """
-    import pandas as pd
     import yfinance as yf
     stock = yf.Ticker(ticker)
     df = stock.history(period=period)
@@ -38,7 +36,6 @@ def _fetch_from_yfinance(ticker: str, period: str):
     return df
 
 def get_price_history(ticker: str, period: str = "1mo", use_cache: bool = True) -> PriceHistory:
-    import pandas as pd
     """
     Retrieve historical price data for a given ticker.
     Supports basic file-based caching during development.

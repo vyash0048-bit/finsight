@@ -3,10 +3,9 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
-from app.models.user import User
 from app.services.rag_service import ingest, retrieve, retrieve_and_rerank
 
 logger = logging.getLogger(__name__)

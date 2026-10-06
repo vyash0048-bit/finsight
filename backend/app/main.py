@@ -4,8 +4,8 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import make_asgi_app
 
-import app.core.metrics as metrics  # noqa: F401 — registers Prometheus collectors
 from app.api.endpoints import auth, documents, market, research
+from app.core import metrics  # registers Prometheus collectors
 
 app = FastAPI(title="FinSight API", version="0.1.0")
 
@@ -41,9 +41,10 @@ async def http_metrics_middleware(request: Request, call_next):
 # ---------------------------------------------------------------------------
 # Frontend Serving (For Hugging Face / Single Port Deployments)
 # ---------------------------------------------------------------------------
+import os
+
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import os
 
 # Serve static files from the frontend directory
 frontend_static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/static"))

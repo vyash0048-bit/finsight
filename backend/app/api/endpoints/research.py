@@ -1,11 +1,9 @@
-import hashlib
 import logging
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field, field_validator
 
-from app.models.user import User
 from app.orchestration.orchestrator import Orchestrator
 
 logger = logging.getLogger(__name__)

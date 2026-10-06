@@ -1,8 +1,8 @@
+import asyncio
+
 import numpy  # noqa: F401 — eager import to prevent circular import race in threads
 import pandas  # noqa: F401
 import yfinance  # noqa: F401
-
-import asyncio
 
 from app.agents.debate_agent import DebateAgent
 from app.agents.fundamental_agent import FundamentalAgent
