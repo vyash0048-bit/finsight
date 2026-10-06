@@ -55,7 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderReport(ticker, data);
 
         } catch (err) {
-            errorMsg.textContent = `API Error: ${err.message}`;
+            console.error("API Fetch Error:", err);
+            errorMsg.innerHTML = `<strong>API Error:</strong> ${err.message}<br><small>Attempted to fetch from: <code>${window.API_URL}</code></small><br><small>Please check the browser console (F12) for more details.</small>`;
             errorMsg.classList.remove('hidden');
         } finally {
             loadingState.classList.add('hidden');
