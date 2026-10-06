@@ -1,4 +1,4 @@
-from app.services.rag_service import client, ingest, retrieve, retrieve_and_rerank
+from app.services.rag_service import get_chroma_client, ingest, retrieve, retrieve_and_rerank
 
 
 def test_rag_evaluation():
@@ -35,7 +35,7 @@ def test_rag_evaluation():
     
     # Try to ensure a clean slate for this eval collection
     try:
-        client.delete_collection("eval_news_collection")
+        get_chroma_client().delete_collection("eval_news_collection")
     except Exception:
         pass
         
@@ -64,6 +64,6 @@ def test_rag_evaluation():
     assert len(reranked_results["documents"][0]) > 0
     # Clean up
     try:
-        client.delete_collection("eval_news_collection")
+        get_chroma_client().delete_collection("eval_news_collection")
     except Exception:
         pass
